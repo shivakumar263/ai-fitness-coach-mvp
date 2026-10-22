@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini AI Fitness API</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f9fafb;
+            color: #111827;
+        }
+        h2 { text-align: center; }
+        .input-group { display: flex; gap: 10px; margin-bottom: 20px; }
+        input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        button {
+            padding: 12px 24px;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover { background-color: #1d4ed8; }
+        #loading { display: none; text-align: center; color: #6b7280; }
+        pre {
+            background-color: #1f2937;
+            color: #10b981;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        #audioContainer {
+            margin-top: 20px;
+            text-align: center;
+            display: none; /* Hidden until audio is ready */
+        }
+    </style>
+</head>
+<body>
+
+    <h2>AI Workout Generator</h2>
+    
+    <div class="input-group">
+        <input type="text" id="promptInput" placeholder="e.g., 20-min dumbbell arm workout">
+        <button onclick="fetchWorkout()">Generate</button>
+    </div>
+
+    <p id="loading">Generating your workout and audio...</p>
+    
+    <!-- This is where the audio player will appear -->
+    <div id="audioContainer">
+        <h3>Coaching Tip</h3>
+        <audio id="workoutAudio" controls>
+            Your browser does not support the audio element.
+        </audio>
+    </div>
+
+    <pre id="resultBox">Your JSON response will appear here.</pre>
+
+    <script>
+        async function fetchWorkout() {
+            const promptText = document.getElementById('promptInput').value;
+            if (!promptText) return;
+
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('resultBox').innerText = '';
+            document.getElementById('audioContainer').style.display = 'none';
+
+            try {
+                // Generate the JSON and the MP3
+                const response = await fetch('/generate-workout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: promptText })
+                });
+
+                const data = await response.json();
+                document.getElementById('resultBox').innerText = JSON.stringify(data, null, 4);
+
+                // Fetch the new audio file
+                const audioPlayer = document.getElementById('workoutAudio');
+                
+                // We add a timestamp to the URL so the browser doesn't load a cached version of the previous audio
+                audioPlayer.src = '/audio?t=' + new Date().getTime(); 
+                
+                // Show the player and play it
+                document.getElementById('audioContainer').style.display = 'block';
+                audioPlayer.play();
+
+            } catch (error) {
+                document.getElementById('resultBox').innerText = "Error connecting to backend.";
+            }
+
+            document.getElementById('loading').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
