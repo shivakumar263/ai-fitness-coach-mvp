@@ -9,12 +9,22 @@ from pydantic import BaseModel
 from groq import Groq
 from dotenv import load_dotenv
 
+from fastapi.middleware.cors import CORSMiddleware
+
 from pipeline.audio_client import generate_coaching_audio
 
 load_dotenv()
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 app = FastAPI(title="Mini AI Fitness API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"], 
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 async def serve_homepage():
