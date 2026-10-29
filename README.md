@@ -1,23 +1,18 @@
-# Autonomous AI Fitness Coach API
+# ⚡️ AI Fitness Coach (LangGraph + React)
 
-A multimodal, agentic backend built with FastAPI and LangGraph that dynamically generates personalized workout routines and synthesizes on-the-fly audio coaching using a ReAct architecture. 
+A full-stack, agentic AI application that generates customized workout routines and coaching audio using an advanced LLM pipeline. Built with a decoupled architecture to demonstrate production-level GenAI workflows.
 
-## 🏗 System Architecture
-This project abandons rigid, hardcoded LLM pipelines in favor of an **Autonomous Agent Workflow**. 
-* **Core Logic:** Uses LangGraph to orchestrate a ReAct (Reasoning and Acting) state graph.
-* **Tool Calling:** The LLM evaluates user prompts and autonomously decides when to trigger the local text-to-speech audio tool.
-* **Zero-Cost Scalability:** Leverages Groq's high-speed API for LLM inference and `edge-tts` for local audio generation, ensuring $0 operational costs.
+## 🛠️ Tech Stack
+* **Backend:** Python 3.13, FastAPI, LangGraph, LangChain
+* **Frontend:** React, Vite, CSS (Responsive Full-Width UI)
+* **AI & Media:** Open-source LLM integration, `fal_client` for audio generation
+* **Formatting:** `react-markdown` with `remark-gfm` for dynamic workout tables
 
-## 🚀 Tech Stack
-* **Backend:** FastAPI, Uvicorn, Python 3.13
-* **AI Orchestration:** LangGraph, LangChain
-* **LLM Engine:** Groq API 
-* **Audio Synthesis:** Edge-TTS (Local, Async)
-* **Frontend:** React (In Development)
-
-## ⚙️ Local Setup & Installation
-
-1. **Clone the repository and navigate to the directory:**
-   ```bash
-   git clone [https://github.com/yourusername/ai-fitness-agent.git](https://github.com/yourusername/ai-fitness-agent.git)
-   cd ai-fitness-agent
+## 🚀 Quick Start
+### 1. Backend Setup
+```bash
+cd mini_fitness-api
+python -m venv venv
+.\venv\Scripts\activate
+pip install -r requirements.txt
+python -m uvicorn main:app --reload
