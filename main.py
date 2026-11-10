@@ -69,8 +69,8 @@ async def generate_workout(request: UserRequest):
         # Command the agent to always use its audio tool
         enhanced_prompt = f"{request.prompt}. You MUST use your audio tool to generate a short, motivating audio introduction or coaching tip specifically for this requested workout."
         
-        result = fitness_agent.invoke({"messages": [HumanMessage(content=enhanced_prompt)]})
-        agent_response = result["messages"][-1].content
+        # 1. Call the function directly (no .invoke or HumanMessage needed)
+        agent_response = fitness_agent(enhanced_prompt)
         
         return {
             "title": "Agentic Workout Plan", 
@@ -79,4 +79,6 @@ async def generate_workout(request: UserRequest):
         }
         
     except Exception as e:
+        # 2. Print the exact error to the terminal if it crashes again
+        print(f"BACKEND CRASHED: {e}") 
         raise HTTPException(status_code=500, detail=str(e))
