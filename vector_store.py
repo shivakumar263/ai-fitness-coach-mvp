@@ -3,14 +3,13 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
 from langchain_core.documents import Document
 
-# 1. Initialize the open-source embedding model (runs locally)
-# "all-MiniLM-L6-v2" is highly efficient and perfect for semantic search
+# Initialize local embedding model for semantic search
+# Utilizing 'all-MiniLM-L6-v2' for optimal local CPU performance and latency
 embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 
-# 2. Define the local storage directory for the database
 DB_DIR = "./chroma_db"
 
-# 3. Initialize the Chroma Vector Store
+# Configure persistent Chroma vector store for RAG memory
 vector_store = Chroma(
     collection_name="workout_history",
     embedding_function=embeddings,
@@ -18,7 +17,10 @@ vector_store = Chroma(
 )
 
 def save_workout_to_db(user_query: str, workout_plan: str):
-    """Embeds and saves a completed workout session to persistent memory."""
+    """
+    Embeds and persists a generated workout session to local vector storage.
+    This allows the agent to maintain historical context and track progressive overload.
+    """
     doc = Document(
         page_content=workout_plan,
         metadata={"query": user_query}
@@ -27,7 +29,10 @@ def save_workout_to_db(user_query: str, workout_plan: str):
     print(f"✅ Workout saved to memory: {user_query}")
 
 def get_past_workouts(user_query: str, k: int = 2) -> str:
-    """Retrieves the most semantically relevant past workouts."""
+    """
+    Retrieves the top-k most semantically relevant past workouts
+    to inject as context for the agent's current generation cycle.
+    """
     results = vector_store.similarity_search(user_query, k=k)
     
     if not results:
